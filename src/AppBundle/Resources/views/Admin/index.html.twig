@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/github-markdown.css">
+
+</head>
+<body>
+
+<div id="content"></div>
+
+<script src="/public/js/highlight.min.js"></script>
+<script src="/public/js/remarkable.min.js"></script>
+<script>
+    var md = new Remarkable('full', {
+        html:         false,        // Enable HTML tags in source
+        xhtmlOut:     false,        // Use '/' to close single tags (<br />)
+        breaks:       false,        // Convert '\n' in paragraphs into <br>
+        langPrefix:   'language-',  // CSS language prefix for fenced blocks
+        linkify:      true,         // autoconvert URL-like texts to links
+        linkTarget:   '',           // set target to open link in
+
+        // Enable some language-neutral replacements + quotes beautification
+        typographer:  false,
+
+        // Double + single quotes replacement pairs, when typographer enabled,
+        // and smartquotes on. Set doubles to '«»' for Russian, '„“' for German.
+        quotes: '“”‘’',
+
+        // Highlighter function. Should return escaped HTML,
+        // or '' if input not changed
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(lang, str).value;
+                } catch (__) {}
+            }
+
+            try {
+                return hljs.highlightAuto(str).value;
+            } catch (__) {}
+
+            return ''; // use external default escaping
+        }
+    });
+
+    var t = md.render("#我的 > ## ss");
+
+    var c = document.getElementById('content');
+    c.innerHTML = t;
+
+</script>
+</body>
+</html>
