@@ -6,53 +6,204 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="/public/css/github-markdown.css">
-
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/public/css/github.css" />
+    <link rel="stylesheet" href="/public/css/app.css">
+    <link rel="stylesheet" href="/public/css/simplemde.min.css">
+    <script src="/public/js/simplemde.min.js"></script>
 </head>
+<style>
+    .right {
+        float: right;
+    }
+</style>
 <body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">马克档</a>
+        </div>
 
-<div id="content"></div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">列表 <span class="sr-only">(current)</span></a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">回收站 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">所有</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ app.user() }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">设置</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 
-<script src="/public/js/highlight.min.js"></script>
-<script src="/public/js/remarkable.min.js"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <div class="blog-list">
+                {% for b in blogs %}
+                <div class="blog-item">
+                    <div class="heading">
+                        <span class="author">仁山</span>
+                        <span class="time">{{ b.createdAt.format("Y年m月d日 H:i") }}</span>
+                    </div>
+                    <div class="body">
+                        <div class="title">{{ b.title }}</div>
+                    </div>
+                    <div class="footer">
+                        <div class="read">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                            1024
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+            <br />
+            <div class="btn  btn-primary">加载更多</div>
+
+        </div>
+
+        <div class="col-md-6 col-xs-12" style="margin-top: 20px">
+            <form aria-disabled="true" id="form">
+
+                <select class="form-control" id="type">
+                    {% for type in types%}
+                        <option value="{{ type.id }}">{{ type.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <br />
+
+                <div class="form-group">
+                    <input type="text" id="title" class="form-control" placeholder="此处是标题">
+                </div>
+
+                <textarea name="code" id="editor"></textarea>
+                <button type="button" class="btn btn-success" id="submit">提交</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script src="/public/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
 <script>
-    var md = new Remarkable('full', {
-        html:         false,        // Enable HTML tags in source
-        xhtmlOut:     false,        // Use '/' to close single tags (<br />)
-        breaks:       false,        // Convert '\n' in paragraphs into <br>
-        langPrefix:   'language-',  // CSS language prefix for fenced blocks
-        linkify:      true,         // autoconvert URL-like texts to links
-        linkTarget:   '',           // set target to open link in
+    var simplemde = new SimpleMDE({ element: document.getElementById("editor"),codeSyntaxHighlighting: true });
 
-        // Enable some language-neutral replacements + quotes beautification
-        typographer:  false,
 
-        // Double + single quotes replacement pairs, when typographer enabled,
-        // and smartquotes on. Set doubles to '«»' for Russian, '„“' for German.
-        quotes: '“”‘’',
+    submitBtn = document.getElementById('submit');
 
-        // Highlighter function. Should return escaped HTML,
-        // or '' if input not changed
-        highlight: function (str, lang) {
-            if (lang && hljs.getLanguage(lang)) {
-                try {
-                    return hljs.highlight(lang, str).value;
-                } catch (__) {}
+    var postUrl = "{{ path('admin_editpage') }}";
+
+    submitBtn.onclick = function (e) {
+        var type = document.getElementById('type').value;
+        var title = document.getElementById('title').value;
+        var content = simplemde.value();
+
+        if(title.trim().length == 0) {
+            return alert("标题不可空");
+        }
+
+        console.log(content);
+
+        if(content.trim().length ==0) {
+            return alert("内容不可空");
+        }
+
+        var options = {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: 'type=' + type + '&title=' + title + '&content=' + content,
+        };
+
+        fetch(postUrl, options).then(function(res) {
+            if(res.ok)
+                return res.json();
+            throw new Error("提交失败");
+        }).then(function(json) {
+
+            if(json.success === true) {
+                document.getElementById('title').value = '';
+                simplemde.value('');
+
+                var dom = generateItem(json.blog);
+
+                var item = document.createElement('div');
+                item.classList.add('blog-item');
+                item.innerHTML = dom;
+
+                document.querySelector(".blog-list").appendChild(item);
+
+            } else {
+
             }
 
-            try {
-                return hljs.highlightAuto(str).value;
-            } catch (__) {}
+        }).catch(function(e) {
+            console.log(e);
+        });
 
-            return ''; // use external default escaping
-        }
-    });
 
-    var t = md.render("#我的 > ## ss");
+    }
 
-    var c = document.getElementById('content');
-    c.innerHTML = t;
+    function generateItem(data) {
+
+        console.log(data.createdAt);
+
+
+        str =
+                        "<div class='heading'>" +
+                            "<span class='author'>仁山</span>"+
+                            "<span class='time'>"+ data.createdAt +"</span>" +
+                        "</div>" +
+                        "<div class='body'>" +
+                             "<div class='title'>"+ data.title +"</div>" +
+                        "</div>"+
+                        "<div class='footer'>" +
+                              "<i class='glyphicon glyphicon-eye-open'></i> 1024"
+                        "</div>"
+
+
+        return str;
+    }
+
 
 </script>
+
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
 </body>
 </html>
