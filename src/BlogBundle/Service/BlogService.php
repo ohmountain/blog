@@ -8,6 +8,7 @@
 
 namespace BlogBundle\Service;
 
+use BlogBundle\Entity\Type;
 use BlogBundle\Repository\BlogRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,9 +21,11 @@ class BlogService
         $this->container = $container;
     }
 
-    public function page($page=1, $limit=10)
+    public function page($type, $page=1, $limit=10)
     {
         $total = $this->count();
+
+        $limit = $limit < 1 ? 10 : $limit;
 
         $maxPage = ceil($total / $limit);
 
@@ -38,22 +41,43 @@ class BlogService
 
         $qb = $em->createQueryBuilder();
 
-        $qb->add('select', 'b')
-            ->add('from', 'BlogBundle:Blog b')
-            ->add('orderBy', 'b.id DESC')
-            ->setFirstResult( $offset )
-            ->setMaxResults( $limit );
+        if($type instanceof Type) {
+            $qb->add('select', 'b')
+                ->add('from', 'BlogBundle:Blog b')
+                ->where('b.trash = false')
+                ->where('b.type = ?1')
+                ->add('orderBy', 'b.id DESC')
+                ->setFirstResult( $offset )
+                ->setMaxResults( $limit )
+                ->setParameter(1, $type);
+        } else {
+            $qb->add('select', 'b')
+                ->add('from', 'BlogBundle:Blog b')
+                ->where('b.trash = false')
+                ->add('orderBy', 'b.id DESC')
+                ->setFirstResult( $offset )
+                ->setMaxResults( $limit );
+        }
 
         return $qb->getQuery()->getResult();
     }
 
-    public function count()
+    public function count($type=null)
     {
         $em = $this->container->get('doctrine')->getManager();
 
         $qb = $em->createQueryBuilder();
-        $qb->select('count(b.id)')
-            ->from('BlogBundle:Blog', 'b');
+
+        if ($type instanceof Type) {
+            $qb->select('count(b.id)')
+                ->from('BlogBundle:Blog', 'b')
+                ->where('b.type = ?1')
+                ->setParameter(1, $type);
+        } else {
+            $qb->select('count(b.id)')
+                ->from('BlogBundle:Blog', 'b');
+        }
+
 
         $res = $qb->getQuery()->getResult();
 

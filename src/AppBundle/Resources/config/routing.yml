@@ -9,3 +9,14 @@ admin_homepage:
 admin_editpage:
     path:     /admin/post
     defaults: { _controller: AppBundle:Admin:post }
+
+
+app_api_type:
+    path:   /api/v1/type
+    defaults: { _controller: AppBundle:Api:type }
+    methods: [get]
+
+app_api_blog:
+    path:   /api/v1/blog
+    defaults: { _controller: AppBundle:Api:blog }
+    methods: [post,get]
