@@ -38,6 +38,9 @@ class AdminController extends Controller
         $title = $request->get('title');
         $content = $request->get('content');
 
+        $title = base64_decode($title);
+        $content = base64_decode($content);
+
         $type = $request->get('type');
 
         $type = $this->getDoctrine()->getRepository('BlogBundle:Type')->find($type);
@@ -45,6 +48,7 @@ class AdminController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $parser = new GithubMarkdown();
+
         $content = $parser->parse($content);
 
         $timeZone = new \DateTimeZone("Asia/Shanghai");

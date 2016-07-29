@@ -115,6 +115,7 @@
 
 <script src="/public/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+<script src="/public/js/base64.min.js"></script>
 
 <script>
     var simplemde = new SimpleMDE({ element: document.getElementById("editor"),codeSyntaxHighlighting: true });
@@ -133,11 +134,17 @@
             return alert("标题不可空");
         }
 
-        console.log(content);
+
 
         if(content.trim().length ==0) {
             return alert("内容不可空");
         }
+
+        title = Base64.encode(title);
+        content = Base64.encode(content);
+
+        var data = 'type=' + type + '&title=' + title + '&content=' + content;
+
 
         var options = {
             method: 'POST',
@@ -145,7 +152,7 @@
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: 'type=' + type + '&title=' + title + '&content=' + content,
+            body: data,
         };
 
         fetch(postUrl, options).then(function(res) {
@@ -178,8 +185,6 @@
     }
 
     function generateItem(data) {
-
-        console.log(data.createdAt);
 
 
         str =
