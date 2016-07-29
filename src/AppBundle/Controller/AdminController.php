@@ -38,8 +38,8 @@ class AdminController extends Controller
         $title = $request->get('title');
         $content = $request->get('content');
 
-        $title = base64_decode($title);
-        $content = base64_decode($content);
+//        $title = urldecode($title);
+//        $content = urldecode($content);
 
         $type = $request->get('type');
 
@@ -80,6 +80,7 @@ class AdminController extends Controller
                         'name'  => $type->getName()
                     ],
                     'title'     => $blog->getTitle(),
+                    'content'   => $content,
                     'createdAt' => $blog->getCreatedAt()->setTimezone($timeZone)->format("Y年m月d日 H:i")
                 ]
             ];
