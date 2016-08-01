@@ -35,37 +35,9 @@ class AdminController extends Controller
 
     public function postAction(Request $request)
     {
-        $title = $request->get('title');
-        $content = $request->get('content');
 
-//        $title = urldecode($title);
-//        $content = urldecode($content);
-
-        $type = $request->get('type');
-
-        $type = $this->getDoctrine()->getRepository('BlogBundle:Type')->find($type);
-
-        $em = $this->getDoctrine()->getManager();
-
-        $parser = new GithubMarkdown();
-
-        $content = $parser->parse($content);
-
-        $timeZone = new \DateTimeZone("Asia/Shanghai");
-
-        $now = new \DateTime('now');
-        $now->setTimezone($timeZone);
-
-        $blog = new Blog();
-        $blog->setTitle($title);
-        $blog->setContent($content);
-        $blog->setCreatedAt($now);
-        $blog->setUpdatedAt($now);
-        $blog->setType($type);
-        $blog->setTrash(false);
-
-        $em->persist($blog);
-        $em->flush();
+        $blog = $this->get('blog.manager')->create();
+        $type = $blog->getType();
 
         $response= new Response();
         $response->headers->set('Content-Type', 'application/json');
@@ -80,8 +52,8 @@ class AdminController extends Controller
                         'name'  => $type->getName()
                     ],
                     'title'     => $blog->getTitle(),
-                    'content'   => $content,
-                    'createdAt' => $blog->getCreatedAt()->setTimezone($timeZone)->format("Y年m月d日 H:i")
+                    'content'   => $blog->getContent(),
+                    'createdAt' => $blog->getCreatedAt()->format("Y年m月d日 H:i")
                 ]
             ];
         } else {

@@ -5,12 +5,12 @@ namespace BlogBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Blog
+ * Version
  *
- * @ORM\Table(name="blog")
- * @ORM\Entity(repositoryClass="BlogBundle\Repository\BlogRepository")
+ * @ORM\Table(name="version")
+ * @ORM\Entity(repositoryClass="BlogBundle\Repository\VersionRepository")
  */
-class Blog
+class Version
 {
     /**
      * @var int
@@ -36,11 +36,11 @@ class Blog
     private $content;
 
     /**
-     * @var bool
+     * @var int
      *
-     * @ORM\Column(name="trash", type="boolean")
+     * @ORM\Column(name="version", type="integer")
      */
-    private $trash;
+    private $version;
 
     /**
      * @var \DateTime
@@ -57,9 +57,10 @@ class Blog
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Type", inversedBy="blogs")
+     * @ORM\ManyToOne(targetEntity="Blog", inversedBy="versions")
+     * @ORM\JoinColumn(name="belongs_to", referencedColumnName="id")
      */
-    private $type;
+    private $belongsTo;
 
 
     /**
@@ -77,7 +78,7 @@ class Blog
      *
      * @param string $title
      *
-     * @return Blog
+     * @return Version
      */
     public function setTitle($title)
     {
@@ -101,7 +102,7 @@ class Blog
      *
      * @param string $content
      *
-     * @return Blog
+     * @return Version
      */
     public function setContent($content)
     {
@@ -121,27 +122,27 @@ class Blog
     }
 
     /**
-     * Set trash
+     * Set version
      *
-     * @param boolean $trash
+     * @param integer $version
      *
-     * @return Blog
+     * @return Version
      */
-    public function setTrash($trash)
+    public function setVersion($version)
     {
-        $this->trash = $trash;
+        $this->version = $version;
 
         return $this;
     }
 
     /**
-     * Get trash
+     * Get version
      *
-     * @return bool
+     * @return int
      */
-    public function getTrash()
+    public function getVersion()
     {
-        return $this->trash;
+        return $this->version;
     }
 
     /**
@@ -149,7 +150,7 @@ class Blog
      *
      * @param \DateTime $createdAt
      *
-     * @return Blog
+     * @return Version
      */
     public function setCreatedAt($createdAt)
     {
@@ -173,7 +174,7 @@ class Blog
      *
      * @param \DateTime $updatedAt
      *
-     * @return Blog
+     * @return Version
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -191,5 +192,28 @@ class Blog
     {
         return $this->updatedAt;
     }
-}
 
+    /**
+     * Set belongsTo
+     *
+     * @param \BlogBundle\Entity\Blog $belongsTo
+     *
+     * @return Version
+     */
+    public function setBelongsTo(\BlogBundle\Entity\Blog $belongsTo = null)
+    {
+        $this->belongsTo = $belongsTo;
+
+        return $this;
+    }
+
+    /**
+     * Get belongsTo
+     *
+     * @return \BlogBundle\Entity\Blog
+     */
+    public function getBelongsTo()
+    {
+        return $this->belongsTo;
+    }
+}

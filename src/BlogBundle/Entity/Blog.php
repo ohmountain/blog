@@ -61,6 +61,17 @@ class Blog
      */
     private $type;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Version", mappedBy="belongsTo")
+     */
+    private $versions;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Version")
+     * @ORM\JoinColumn(name="current_version", referencedColumnName="id")
+     */
+    private $version;
+
 
     /**
      * Get id
@@ -214,5 +225,70 @@ class Blog
     public function getType()
     {
         return $this->type;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->versions = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add version
+     *
+     * @param \BlogBundle\Entity\Version $version
+     *
+     * @return Blog
+     */
+    public function addVersion(\BlogBundle\Entity\Version $version)
+    {
+        $this->versions[] = $version;
+
+        return $this;
+    }
+
+    /**
+     * Remove version
+     *
+     * @param \BlogBundle\Entity\Version $version
+     */
+    public function removeVersion(\BlogBundle\Entity\Version $version)
+    {
+        $this->versions->removeElement($version);
+    }
+
+    /**
+     * Get versions
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVersions()
+    {
+        return $this->versions;
+    }
+
+    /**
+     * Set version
+     *
+     * @param \BlogBundle\Entity\Version $version
+     *
+     * @return Blog
+     */
+    public function setVersion(\BlogBundle\Entity\Version $version = null)
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return \BlogBundle\Entity\Version
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }
