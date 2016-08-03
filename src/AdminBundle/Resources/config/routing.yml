@@ -5,3 +5,7 @@ admin1_homepage:
 admin1_testpage:
     path:     /abc
     defaults: { _controller: AdminBundle:Default:getTypeNumber }
+
+admin_api_blog_get:
+    path:     /blog/{typeId}/{page}/{limit}
+    defaults: { _controller: AdminBundle:Default:getBlog }

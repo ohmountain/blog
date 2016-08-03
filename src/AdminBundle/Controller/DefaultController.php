@@ -2,8 +2,12 @@
 
 namespace AdminBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use BlogBundle\Entity\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AdminBundle\Common\ResponseTrait;
+use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Common\Cache\RedisCache;
 
 class DefaultController extends Controller
 {
@@ -36,5 +40,16 @@ class DefaultController extends Controller
     public function getBlogAction($typeId=0, $page=1, $limit=20)
     {
 
+        $blogs = $this->get('blog.manager')->page($typeId, $page, $limit);
+
+        if (count($blogs) == 0) {
+            $this->wrapResult(true, $this->FETCH_BLOG_WITH_ZERO, $blogs);
+        } else {
+            $this->wrapResult(true, $this->FETCH_BLOG_OK, $blogs);
+        }
+
+        return $this->response;
+
+        //return $this->render('AdminBundle:Default:index.html.twig');
     }
 }

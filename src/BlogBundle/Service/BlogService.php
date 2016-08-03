@@ -11,6 +11,7 @@ namespace BlogBundle\Service;
 use BlogBundle\Entity\Blog;
 use BlogBundle\Entity\Type;
 use BlogBundle\Entity\Version;
+use Doctrine\Common\Cache\RedisCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use cebe\markdown\GithubMarkdown;
@@ -27,13 +28,33 @@ class BlogService
     }
 
     /**
-     * @param $type
+     * @param $typeId
      * @param int $page
      * @param int $limit
      * @return array
      */
-    public function page($type, $page=1, $limit=10)
+    public function page($typeId, $page=1, $limit=10)
     {
+
+
+        $typeCacheKey = 'type_' . $typeId;
+
+        $cacheDriver = $this->container->get('cache.manager');
+
+        $type = unserialize($cacheDriver->get($typeCacheKey));
+
+
+        if (!$type) {
+            $type = $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
+        }
+
+
+        if (!$type && $typeId !== 0) {
+            return [];
+        }
+
+        $cacheDriver->set($typeCacheKey, serialize($type));
+
         $total = $this->count();
 
         $limit = $limit < 1 ? 10 : $limit;
@@ -48,28 +69,52 @@ class BlogService
 
         $offset = ($page-1)*$limit;
 
+
+        if ($type instanceof Type) {
+            $cacheKey = 'blog_type_' . $type->getId() . '_page_' . $page . '_limit_' . $limit;
+        } else {
+            $cacheKey = 'blog_type_all_page_' . $page . '_limit_' . $limit;
+        }
+
+
+
+        $result = $cacheDriver->get($cacheKey);
+
+        if ($result) {
+            return $result;
+        }
+
         $em = $this->container->get('doctrine')->getManager();
         $qb = $em->createQueryBuilder();
 
+
         if($type instanceof Type) {
-            $qb->add('select', 'b')
+            $qb->select('b')
+                ->addSelect('t')
+                ->addSelect('v')
                 ->add('from', 'BlogBundle:Blog b')
-                ->where('b.trash = false')
                 ->where('b.type = ?1')
-                ->add('orderBy', 'b.id DESC')
+                ->join('b.type', 't', 'WITH', 't.id = b.type')
+                ->join('b.version', 'v', 'v.id = b.version')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit )
                 ->setParameter(1, $type);
         } else {
-            $qb->add('select', 'b')
+            $qb->select('b.*')
+                ->addSelect('t.id, t.name')
+                ->addSelect('v.id, v.version')
                 ->add('from', 'BlogBundle:Blog b')
-                ->where('b.trash = false')
-                ->add('orderBy', 'b.id DESC')
+                ->join('b.type', 't', 'WITH', 't.id = b.type')
+                ->join('b.version', 'v', 'v.id = b.version')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit );
         }
 
-        return $qb->getQuery()->getResult();
+        $result = $qb->getQuery()->getArrayResult();
+
+        $cacheDriver->set($cacheKey, $result);
+
+        return $result;
     }
 
     /**
@@ -78,24 +123,40 @@ class BlogService
      */
     public function count($type=null)
     {
-        $em = $this->container->get('doctrine')->getManager();
-
-        $qb = $em->createQueryBuilder();
-
-        if ($type instanceof Type) {
-            $qb->select('count(b.id)')
-                ->from('BlogBundle:Blog', 'b')
-                ->where('b.type = ?1')
-                ->setParameter(1, $type);
+        if ($type == null) {
+            $countKey = 'count_type_all';
         } else {
-            $qb->select('count(b.id)')
-                ->from('BlogBundle:Blog', 'b');
+            $countKey = "count_type_{$type}";
         }
 
+        $count = $this->container->get('cache.manager')->get($countKey);
 
-        $res = $qb->getQuery()->getResult();
+        if (!$count) {
 
-        return $res[0][1];
+            $em = $this->container->get('doctrine')->getManager();
+
+            $qb = $em->createQueryBuilder();
+
+            if ($type instanceof Type) {
+                $qb->select('count(b.id)')
+                    ->from('BlogBundle:Blog', 'b')
+                    ->where('b.type = ?1')
+                    ->setParameter(1, $type);
+            } else {
+                $qb->select('count(b.id)')
+                    ->from('BlogBundle:Blog', 'b');
+            }
+
+
+            $res = $qb->getQuery()->getResult();
+
+            $count = $res[0][1];
+
+            $this->container->get('cache.manager')->set($countKey, $count);
+
+        }
+
+        return $count;
     }
 
     /**

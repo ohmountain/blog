@@ -13,3 +13,6 @@ services:
     type.manager:
         class: BlogBundle\Service\TypeService
         arguments: ["@service_container"]
+
+    cache.manager:
+        class: BlogBundle\Service\CacheService
