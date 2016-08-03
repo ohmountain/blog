@@ -20,3 +20,7 @@ app_api_blog:
     path:   /api/v1/blog
     defaults: { _controller: AppBundle:Api:blog }
     methods: [post,get]
+
+admin_testpage:
+    path:   /test
+    defaults: { _controller: AppBundle:Admin:test }

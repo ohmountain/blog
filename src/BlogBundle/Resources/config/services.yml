@@ -9,3 +9,7 @@ services:
     version.manager:
         class: BlogBundle\Service\VersionService
         arguments: ["@service_container", "@request_stack"]
+
+    type.manager:
+        class: BlogBundle\Service\TypeService
+        arguments: ["@service_container"]

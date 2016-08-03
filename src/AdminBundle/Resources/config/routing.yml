@@ -1,0 +1,7 @@
+admin1_homepage:
+    path:     /aabbcc
+    defaults: { _controller: AdminBundle:Default:getType }
+
+admin1_testpage:
+    path:     /abc
+    defaults: { _controller: AdminBundle:Default:getTypeNumber }

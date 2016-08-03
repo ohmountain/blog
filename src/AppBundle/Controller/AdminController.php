@@ -71,4 +71,9 @@ class AdminController extends Controller
     {
 
     }
+
+    public function testAction()
+    {
+        return $this->render('AppBundle:Default:test.html.twig');
+    }
 }
