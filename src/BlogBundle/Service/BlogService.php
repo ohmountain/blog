@@ -55,7 +55,7 @@ class BlogService
 
         $cacheDriver->set($typeCacheKey, serialize($type));
 
-        $total = $this->count();
+        $total = $this->count($type);
 
         $limit = $limit < 1 ? 10 : $limit;
 
@@ -110,23 +110,30 @@ class BlogService
                 ->setMaxResults( $limit );
         }
 
-        $result = $qb->getQuery()->getArrayResult();
+        $blogs = $qb->getQuery()->getArrayResult();
 
-        $cacheDriver->set($cacheKey, $result);
+        $data = [
+            'total' => $total,
+            'page' => $page,
+            'maxPage' => $maxPage,
+            'blogs' => $blogs
+        ];
 
-        return $result;
+        $cacheDriver->set($cacheKey, $data);
+
+        return $data;
     }
 
     /**
      * @param null $type
      * @return integer
      */
-    public function count($type=null)
+    public function count($type)
     {
         if ($type == null) {
             $countKey = 'count_type_all';
         } else {
-            $countKey = "count_type_{$type}";
+            $countKey = "count_type_{$type->getId()}";
         }
 
         $count = $this->container->get('cache.manager')->get($countKey);
@@ -141,7 +148,7 @@ class BlogService
                 $qb->select('count(b.id)')
                     ->from('BlogBundle:Blog', 'b')
                     ->where('b.type = ?1')
-                    ->setParameter(1, $type);
+                    ->setParameter(1, $type->getId());
             } else {
                 $qb->select('count(b.id)')
                     ->from('BlogBundle:Blog', 'b');

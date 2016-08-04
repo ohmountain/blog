@@ -40,12 +40,12 @@ class DefaultController extends Controller
     public function getBlogAction($typeId=0, $page=1, $limit=20)
     {
 
-        $blogs = $this->get('blog.manager')->page($typeId, $page, $limit);
+        $data = $this->get('blog.manager')->page($typeId, $page, $limit);
 
-        if (count($blogs) == 0) {
-            $this->wrapResult(true, $this->FETCH_BLOG_WITH_ZERO, $blogs);
+        if (count($data['blogs']) == 0) {
+            $this->wrapResult(true, $this->FETCH_BLOG_WITH_ZERO, $data);
         } else {
-            $this->wrapResult(true, $this->FETCH_BLOG_OK, $blogs);
+            $this->wrapResult(true, $this->FETCH_BLOG_OK, $data);
         }
 
         return $this->response;
