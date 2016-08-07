@@ -70,10 +70,10 @@
                 <div class="blog-item">
                     <div class="heading">
                         <span class="author">仁山</span>
-                        <span class="time">{{ b.createdAt.format("Y年m月d日 H:i") }}</span>
+                        <span class="time">{{ b[0].createdAt.format("Y年m月d日 H:i") }}</span>
                     </div>
                     <div class="body">
-                        <div class="title">{{ b.title }}</div>
+                        <div class="title">{{ b[0].title}}</div>
                     </div>
                     <div class="footer">
                         <div class="read">

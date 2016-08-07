@@ -29,6 +29,9 @@ class AdminController extends Controller
 
         $blogs = $manager->page(0);
 
+        $blogs = $blogs['blogs'];
+        
+
         return $this->render("AppBundle:Admin:index.html.twig", ['types' => $types, 'blogs' => $blogs]);
     }
 

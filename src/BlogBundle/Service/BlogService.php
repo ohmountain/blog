@@ -44,6 +44,7 @@ class BlogService
         $type = unserialize($cacheDriver->get($typeCacheKey));
 
 
+
         if (!$type) {
             $type = $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
         }
@@ -100,7 +101,7 @@ class BlogService
                 ->setMaxResults( $limit )
                 ->setParameter(1, $type);
         } else {
-            $qb->select('b.*')
+            $qb->select('b')
                 ->addSelect('t.id, t.name')
                 ->addSelect('v.id, v.version')
                 ->add('from', 'BlogBundle:Blog b')
