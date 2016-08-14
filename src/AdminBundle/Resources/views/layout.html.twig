@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/public/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="/public/css/plugins/bootstrap3-wysihtml5.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/ionicons/2.0.1/css/ionicons.min.css">
+    <title>马可档后台</title>
+</head>
+<body class="hold-transition skin-red-light sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="/" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">MKD</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">码可档</span>
+            </a>
+
+            <nav class="navbar navbar-static-top">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="hidden-xs">{{ app.user }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+        </header>
+
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu">
+                    <li class="header">目录</li>
+                    <li class="active treeview">
+                        <a href="#">
+                            <i class="fa fa-home"></i> <span>首页</span>
+                            <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/"><i class="fa fa-home"></i>前台首页</a></li>
+                            <li class="active"><a href=""><i class="fa fa-gears"></i>后台首页</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-book"></i> <span>文章</span>
+                            <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href=""><i class="fa fa-list"></i>文章列表</a></li>
+                            <li><a href=""><i class="fa fa-pencil"></i>撰写</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>码可档<small>控制台</small></h1>
+                <ol class="breadcrumb">
+                    <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                    <li class="active">控制台</li>
+                </ol>
+            </section>
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+    </div>
+
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/public/js/AdminLTE.js"></script>
+<script src="/public/js/plugins/jquery.dataTables.min.js"></script>
+<script src="/public/js/plugins/dataTables.bootstrap.min.js"></script>
+
+{% block page_js %}{% endblock %}
+
+</body>
+</html>

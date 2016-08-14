@@ -1,6 +1,6 @@
 admin1_homepage:
     path:     /aabbcc
-    defaults: { _controller: AdminBundle:Default:getType }
+    defaults: { _controller: AdminBundle:Default:index }
 
 admin1_testpage:
     path:     /abc

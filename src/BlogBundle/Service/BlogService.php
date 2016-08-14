@@ -43,14 +43,12 @@ class BlogService
 
         $type = unserialize($cacheDriver->get($typeCacheKey));
 
-
-
         if (!$type) {
             $type = $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
         }
 
 
-        if (!$type && $typeId !== 0) {
+        if (!$type && intval($typeId) !== 0) {
             return [];
         }
 
@@ -90,9 +88,9 @@ class BlogService
 
 
         if($type instanceof Type) {
-            $qb->select('b')
-                ->addSelect('t')
-                ->addSelect('v')
+            $qb->select('b.id, b.title, b.createdAt')
+                ->addSelect('t.id as type_id, t.name as type_name')
+                ->addSelect('v.id as version_id v.name as version_number')
                 ->add('from', 'BlogBundle:Blog b')
                 ->where('b.type = ?1')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
@@ -101,9 +99,9 @@ class BlogService
                 ->setMaxResults( $limit )
                 ->setParameter(1, $type);
         } else {
-            $qb->select('b')
-                ->addSelect('t.id, t.name')
-                ->addSelect('v.id, v.version')
+            $qb->select('b.id, b.title, b.createdAt')
+                ->addSelect('t.id as type_id, t.name as type_name')
+                ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
                 ->join('b.version', 'v', 'v.id = b.version')

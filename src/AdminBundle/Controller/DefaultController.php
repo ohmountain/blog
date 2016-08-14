@@ -42,7 +42,7 @@ class DefaultController extends Controller
 
         $data = $this->get('blog.manager')->page($typeId, $page, $limit);
 
-        if (count($data['blogs']) == 0) {
+        if (count($data) === 0 ||count($data['blogs']) === 0) {
             $this->wrapResult(true, $this->FETCH_BLOG_WITH_ZERO, $data);
         } else {
             $this->wrapResult(true, $this->FETCH_BLOG_OK, $data);

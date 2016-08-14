@@ -1,10 +1,248 @@
-<!doctype html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'AdminBundle::layout.html.twig' %}
 
-</body>
-</html>
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="ion ion-document-text"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">文章数量</span>
+                    <span class="info-box-number">125</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-red"><i class="ion ion-android-menu"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">分类数量</span>
+                    <span class="info-box-number">4</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-green"><i class="ion ion-android-happy"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">历史浏览量</span>
+                    <span class="info-box-number">760</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-yellow"><i class="ion ion-share"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">分享</span>
+                    <span class="info-box-number">2,000</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+    </div>
+
+    <hr />
+
+    <!-- fix for small devices only -->
+    <div class="clearfix visible-sm-block"></div>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua-active">R</span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Rust</span>
+                    <span class="info-box-number">125</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-fuchsia">J</span>
+                <div class="info-box-content">
+                    <span class="info-box-text">JavaScript</span>
+                    <span class="info-box-number">4</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-teal">P</span>
+                <div class="info-box-content">
+                    <span class="info-box-text">PHP</span>
+                    <span class="info-box-number">125</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-gray">L</span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Linux</span>
+                    <span class="info-box-number">4</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">所有文章</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="col-sm-6">
+                        <div class="dataTables_length" id="example1_length">
+                            <label>
+                                <select name="example1_length" aria-controls="example1" class="form-control input-sm">
+                                    <option value="1">Rust</option>
+                                    <option value="2">Linux</option>
+                                    <option value="3">PHP</option>
+                                    <option value="4">JavaScript</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="example1_filter" style="text-align: right"><label><input type="search" class="form-control input-sm" placeholder="过滤" aria-controls="example1"> </label><button class="btn btn-success btn-sm">查询</button></div>
+                    </div>
+                    <div class="dataTables_wrapper form-inline dt-bootstrap">
+                        <table class="table table-bordered table-striped dataTable">
+                            <thead>
+                                <tr>
+                                    <td>标题</td>
+                                    <td>分类</td>
+                                    <td>发布时间</td>
+                                    <td>版本</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody id="table_content"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script>
+
+        var host = window.location.protocol + "//" + window.location.host;
+
+
+        $(function (){
+            getBlog(0, 1, 10, buildTableContent);
+
+            $("#table_content .delete_blog").click(function (e){
+                console.log(e);
+            })
+
+        });
+
+        function getBlog(type, page, limit, cb) {
+
+            if (type == undefined || page == undefined || limit == undefined || cb == undefined) {
+                return false;
+            }
+
+            if (typeof cb !== 'function') {
+                return false;
+            }
+
+            type  = parseInt(type);
+            page  = parseInt(page);
+            limit = parseInt(limit);
+
+            var url = host + "/blog/" + type + "/" + page + "/" + limit;
+
+
+            $.get(url, function(response) {
+
+                if (response.ok === false || response.statusCode !== 800) {
+                    return;
+                }
+
+                window.blogsData = response.data;
+                cb(response.data);
+            })
+
+        }
+
+        function buildTableContent(data) {
+
+            var blogs = data.blogs;
+
+            var template = "";
+
+            for (var i in blogs) {
+                var blog = blogs[i];
+                var version = blogs[i]['version_number'];
+
+                var tr = "<tr class='row> data-id='"+ blog.id +"'>";
+
+                var td = "<td>" + blog.title + "</td>";
+                    td = td + "<td>" + blog.type_name + "</td>";
+                    td = td + "<td>" + blog.createdAt.date.split('.')[0] + "</td>";
+                    td = td + "<td>" + version + "</td>";
+                    td = td + "<td><a style='cursor: pointer' class='delete_blog' data-id='"+ blog.id +"'>删除</a>&nbsp;<a style='cursor: pointer' class='edit_blog' data-id='"+ blog.id +"'>编辑</a></td>";
+
+                tr += td + "</tr>";
+
+                template += tr;
+            }
+
+            $("#table_content").html(template);
+            $("#table_content .delete_blog").click(function (e){
+                console.log(e.target);
+            })
+
+        }
+    </script>
+{% endblock %}
