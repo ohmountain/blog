@@ -134,19 +134,14 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="col-sm-6">
-                        <div class="dataTables_length" id="example1_length">
+                        <div class="dataTables_length">
                             <label>
-                                <select name="example1_length" aria-controls="example1" class="form-control input-sm">
-                                    <option value="1">Rust</option>
-                                    <option value="2">Linux</option>
-                                    <option value="3">PHP</option>
-                                    <option value="4">JavaScript</option>
-                                </select>
+                                <select id="types_option" aria-controls="types_option" class="form-control input-sm"></select>
                             </label>
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div id="example1_filter" style="text-align: right"><label><input type="search" class="form-control input-sm" placeholder="过滤" aria-controls="example1"> </label><button class="btn btn-success btn-sm">查询</button></div>
+                        <div><label><input type="search" class="form-control input-sm" placeholder="过滤" aria-controls="example1"> </label><button class="btn btn-success btn-sm">查询</button></div>
                     </div>
                     <div class="dataTables_wrapper form-inline dt-bootstrap">
                         <table class="table table-bordered table-striped dataTable">
@@ -161,6 +156,7 @@
                             </thead>
                             <tbody id="table_content"></tbody>
                         </table>
+                        <div id="pager" class="pagination"></div>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -172,13 +168,16 @@
 {% endblock %}
 
 {% block page_js %}
+    <script src="/public/js/plugins/jqPaginator.min.js"></script>
     <script>
 
         var host = window.location.protocol + "//" + window.location.host;
 
+        var onShowType = 0;
 
         $(function (){
-            getBlog(0, 1, 10, buildTableContent);
+            getTypes(generateTypes);
+            getBlog(0, 1, 20, buildTableContent);
 
             $("#table_content .delete_blog").click(function (e){
                 console.log(e);
@@ -209,6 +208,8 @@
                     return;
                 }
 
+                console.log(response.data.total);
+
                 window.blogsData = response.data;
                 cb(response.data);
             })
@@ -238,11 +239,63 @@
                 template += tr;
             }
 
+            $('#pager').jqPaginator({
+                totalPages: data.maxPage,
+                visiblePages: Math.ceil(data.total / data.maxPage),
+                totalCounts: parseInt(data.total),
+                currentPage: parseInt(data.page),
+                onPageChange: function (num, type) {
+                    if (type === 'init')
+                        return;
+                    getBlog(onShowType, num, Math.ceil(data.total / data.maxPage), buildTableContent);
+                }
+            });
+
             $("#table_content").html(template);
             $("#table_content .delete_blog").click(function (e){
                 console.log(e.target);
             })
 
         }
+
+        function getTypes(cb) {
+
+            if (typeof  cb !== 'function') {
+                return;
+            }
+
+            $.get(host+"/type", function(response) {
+                if (response.ok !== true && response.statusCode === 700) {
+                    return false;
+                }
+
+                cb(response.data);
+
+            })
+        }
+
+        function generateTypes(data) {
+            var types = data.types;
+
+            var opt = document.createElement('option');
+            opt.value = 0;
+            opt.innerHTML = '全部';
+            $('#types_option').append(opt);
+
+            types.forEach(function(t) {
+                var opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerHTML = t.name;
+                $('#types_option').append(opt);
+            });
+
+            $('#types_option').change(function(e) {
+                onShowType = parseInt(e.target.value);
+                console.log(onShowType);
+                getBlog(onShowType, 1, 20, buildTableContent)
+            })
+
+        }
+
     </script>
 {% endblock %}

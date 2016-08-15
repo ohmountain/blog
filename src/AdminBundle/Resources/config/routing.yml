@@ -9,3 +9,9 @@ admin1_testpage:
 admin_api_blog_get:
     path:     /blog/{typeId}/{page}/{limit}
     defaults: { _controller: AdminBundle:Default:getBlog }
+    methods: [GET]
+
+admin_api_type_get:
+     path:     /type
+     defaults: { _controller: AdminBundle:Default:getType }
+     methods: [GET]

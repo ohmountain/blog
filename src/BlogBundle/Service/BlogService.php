@@ -90,7 +90,7 @@ class BlogService
         if($type instanceof Type) {
             $qb->select('b.id, b.title, b.createdAt')
                 ->addSelect('t.id as type_id, t.name as type_name')
-                ->addSelect('v.id as version_id v.name as version_number')
+                ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')
                 ->where('b.type = ?1')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
