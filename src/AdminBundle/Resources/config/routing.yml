@@ -15,3 +15,9 @@ admin_api_type_get:
      path:     /type
      defaults: { _controller: AdminBundle:Default:getType }
      methods: [GET]
+
+admin_test_page:
+      path:     /preEdit/{id}
+      defaults: { _controller: AdminBundle:Default:preEdit }
+      requirements:
+        id: \d+

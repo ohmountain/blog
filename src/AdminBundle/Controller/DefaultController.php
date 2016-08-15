@@ -2,6 +2,8 @@
 
 namespace AdminBundle\Controller;
 
+use BlogBundle\Entity\Blog;
+use BlogBundle\Entity\Version;
 use Doctrine\ORM\EntityManager;
 use BlogBundle\Entity\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -51,5 +53,58 @@ class DefaultController extends Controller
         return $this->response;
 
         //return $this->render('AdminBundle:Default:index.html.twig');
+    }
+
+    public function preEditAction($id)
+    {
+        $blogManager = $this->getDoctrine()->getRepository('BlogBundle:Blog');
+
+        /**
+         * @var $blog Blog
+         */
+        $blog = $blogManager->find($id);
+
+        if (!$blog) {
+            $this->wrapResult(true, $this->FETCH_BLOG_FAIL, []);
+
+            return $this->response;
+        }
+
+        $type = $blog->getType();
+
+        $typeArr = [
+            'id' => $type->getId(),
+            'name' => $type->getName()
+        ];
+
+        $versions = $this->container->get('version.manager')->getVersions($blog);
+
+        $versionsArr = [];
+
+        /**
+         * @var $version Version
+         */
+        foreach ($versions as $version) {
+            $tmp = [];
+            $tmp['id'] = $version->getId();
+            $tmp['version'] = $version->getVersion();
+            $tmp['title'] = $version->getTitle();
+            $tmp['content'] = $version->getContent();
+
+            $versionsArr[] = $tmp;
+        }
+
+
+        $blogArr = [
+            'id' => $blog->getId(),
+            'title' => $blog->getTitle(),
+            'version' => $blog->getVersion()->getId(),
+            'type' => $typeArr,
+            'versions' => $versionsArr
+        ];
+
+        $this->wrapResult(true, $this->FETCH_BLOG_OK, $blogArr);
+
+        return $this->response;
     }
 }

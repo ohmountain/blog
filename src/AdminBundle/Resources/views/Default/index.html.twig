@@ -9,7 +9,7 @@
 
                 <div class="info-box-content">
                     <span class="info-box-text">文章数量</span>
-                    <span class="info-box-number">125</span>
+                    <span class="info-box-number" id="blogs_number"></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -22,7 +22,7 @@
 
                 <div class="info-box-content">
                     <span class="info-box-text">分类数量</span>
-                    <span class="info-box-number">4</span>
+                    <span class="info-box-number" id="types_number"></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -133,6 +133,14 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
+
+                    <div class="delete_wapper" style="display: none">
+                        <div style="position: absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition-duration: 0.45s;text-align: center">
+                            <p id="confirm_delete">确认删除《文章标题》码？</p>
+                            <button class="btn btn-danger" id="do_delete">删除</button>
+                            <button class="btn btn-success" id="cancel_delete">取消</button></div>
+                    </div>
+
                     <div class="col-sm-6">
                         <div class="dataTables_length">
                             <label>
@@ -165,15 +173,82 @@
         </div>
         <!-- /.col -->
     </div>
+
+    <div class="row edit_wrapper" style="position:relative; display: none;">
+        <div class="col-md-4 col-md-offset-1">
+            <div class="form-group">
+                <label for="new_title">标题</label>
+                <input type="text" name="new_title" id="new_title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="new_type" name="new_title">分类</label>
+                <select id="new_type" class="form-control">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="new_version" name="new_version">切换版本</label>
+                <select id="new_version" class="form-control">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-10 col-md-offset-1">
+            <textarea id="editor" style="overflow-y: scroll"></textarea>
+            <div style="text-align: center">
+                <button class="btn btn-success">修改</button>
+                <button class="btn btn-default">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .edit_hover, .delete_wapper{
+            position: absolute;
+            width: 100%;
+            height:100%;
+            background-color: rgba(255, 255, 255, .9);
+            z-index: 99;
+            top: 0;
+            left: 0;
+            padding: 10px;
+        }
+
+        .edit_hover .edit_close {
+            display: inline-block;
+            float: right;
+            cursor: pointer;
+            height: 48px;
+            width: 48px;
+            text-align: center;
+            line-height:48px;
+        }
+
+        .delete_wapper {
+            display: flex;
+            text-align: center;
+        }
+
+    </style>
+
+
 {% endblock %}
 
 {% block page_js %}
     <script src="/public/js/plugins/jqPaginator.min.js"></script>
+    <link rel="stylesheet" href="/public/css/simplemde.min.css">
+    <script src="/public/js/simplemde.min.js"></script>
     <script>
+
+        var simplemde = new SimpleMDE({ element: document.getElementById("editor"),codeSyntaxHighlighting: true });
 
         var host = window.location.protocol + "//" + window.location.host;
 
         var onShowType = 0;
+
+        var editBlogData = undefined;
 
         $(function (){
             getTypes(generateTypes);
@@ -181,6 +256,10 @@
 
             $("#table_content .delete_blog").click(function (e){
                 console.log(e);
+            })
+
+            $("#close_hover").click(function() {
+                $("#hover").fadeOut()
             })
 
         });
@@ -212,6 +291,11 @@
 
                 window.blogsData = response.data;
                 cb(response.data);
+
+                if (type === 0) {
+                    $("#blogs_number").text(response.data.total);
+                }
+
             })
 
         }
@@ -226,13 +310,13 @@
                 var blog = blogs[i];
                 var version = blogs[i]['version_number'];
 
-                var tr = "<tr class='row> data-id='"+ blog.id +"'>";
+                var tr = "<tr data-id='"+blog.id+"'>";
 
                 var td = "<td>" + blog.title + "</td>";
                     td = td + "<td>" + blog.type_name + "</td>";
                     td = td + "<td>" + blog.createdAt.date.split('.')[0] + "</td>";
                     td = td + "<td>" + version + "</td>";
-                    td = td + "<td><a style='cursor: pointer' class='delete_blog' data-id='"+ blog.id +"'>删除</a>&nbsp;<a style='cursor: pointer' class='edit_blog' data-id='"+ blog.id +"'>编辑</a></td>";
+                    td = td + "<td><a style='cursor: pointer' class='delete_blog' data-title='"+ blog.title +"' data-id='"+ blog.id +"'>删除</a>&nbsp;<a style='cursor: pointer' class='edit_blog' data-id='"+ blog.id +"'>编辑</a></td>";
 
                 tr += td + "</tr>";
 
@@ -253,10 +337,28 @@
 
             $("#table_content").html(template);
             $("#table_content .delete_blog").click(function (e){
-                console.log(e.target);
+                var id = $(e.target).attr("data-id");
+                var title = $(e.target).attr("data-title");
+
+                var confirm_text = "确定要删除《" + title + "》吗？";
+
+                $("#confirm_delete").text(confirm_text);
+                $("#do_delete").attr("data-id", id);
+
+                $(".delete_wapper").fadeIn();
+            });
+
+            $(".edit_blog").click(function(e) {
+                var id = $(e.target).attr('data-id');
+
+                editBlog(id);
             })
 
         }
+
+        $("#cancel_delete").click(function() {
+           $(".delete_wapper").fadeOut();
+        });
 
         function getTypes(cb) {
 
@@ -277,6 +379,8 @@
         function generateTypes(data) {
             var types = data.types;
 
+            $("#types_number").text(data.types.length);
+
             var opt = document.createElement('option');
             opt.value = 0;
             opt.innerHTML = '全部';
@@ -296,6 +400,78 @@
             })
 
         }
+
+        $("#do_delete").click(function() {
+            deleteBlog($(this).attr("data-id"));
+        });
+
+        function deleteBlog(blog_id) {
+            var t = "tr[data-id=" +blog_id +"]";
+            $(t).remove();
+            console.log($(t));
+            $(".delete_wapper").fadeOut();
+        }
+
+        function editBlog(blog_id) {
+
+            $("#new_type option").remove();
+            $("#new_version option").remove();
+
+            $.get(
+                    host+"/preEdit/" + blog_id,
+                    function(response) {
+                        if (response.statusCode !== 800) {
+                            return;
+                        }
+
+                        editBlogData = data = response.data;
+
+                        type = document.createElement('option');
+                        type.value = data.type.id;
+                        type.innerText = data.type.name;
+
+                        $("#new_type").append(type);
+
+                        console.log();
+
+                        simplemde.value(data.content)
+
+                        $("#new_title").val(data.title);
+
+                        data.versions.forEach(function(v){
+
+                            var opt = document.createElement('option');
+                            opt.value = v.id;
+                            opt.text = v.version;
+
+                            if (data.version === v.id) {
+                                simplemde.value(v.content)
+                                opt.setAttribute('selected', 'selected');
+                            }
+
+
+                            $("#new_version").append(opt);
+                        })
+
+                        $("#new_version").change(function(e) {
+                            onChangeVersion(e.target.value);
+                        })
+                    }
+            );
+
+            $(".edit_wrapper").fadeIn();
+        }
+
+        function onChangeVersion(version_id) {
+
+
+            editBlogData.versions.forEach(function(v) {
+                if (version_id == v.id) {
+                    simplemde.value(v.content)
+                }
+            })
+        }
+
 
     </script>
 {% endblock %}

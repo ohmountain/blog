@@ -242,4 +242,22 @@ class BlogService
 
     }
 
+    /**
+     * @param $id
+     * @return Blog|bool
+     */
+    public function getBlog($id)
+    {
+        /**
+         * @var $blog Blog
+         */
+        $blog = $this->container->get('doctrine')->getRepository('BlogBundle:Blog')->find($id);
+
+        if (!$blog) {
+            return false;
+        }
+
+        return $blog;
+    }
+
 }

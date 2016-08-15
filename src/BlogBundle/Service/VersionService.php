@@ -55,4 +55,15 @@ class VersionService
 
         return $version;
     }
+
+    public function getVersions(Blog $blog)
+    {
+        $rep = $this->container->get('doctrine')->getRepository("BlogBundle:Version");
+
+        $versions = $rep->findBy([
+            'belongsTo' => $blog
+        ]);
+
+        return $versions;
+    }
 }

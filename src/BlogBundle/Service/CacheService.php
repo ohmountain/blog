@@ -36,4 +36,14 @@ class CacheService
     {
         return $this->cacheDriver->save($key, $data, $expire);
     }
+
+    public final function clear($key)
+    {
+        $this->cacheDriver->delete($key);
+    }
+
+    public final function clearAll()
+    {
+        $this->cacheDriver->deleteAll();
+    }
 }
