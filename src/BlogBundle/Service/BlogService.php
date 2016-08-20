@@ -132,10 +132,15 @@ class BlogService
      */
     public function count($type)
     {
+
+
         if ($type == null) {
             $countKey = 'count_type_all';
         } else {
-            $countKey = "count_type_{$type->getId()}";
+            if (!is_object($type))
+                $countKey = "count_type_{$type}";
+            else
+                $countKey = "count_type_{$type->getId()}";
         }
 
         $count = $this->container->get('cache.manager')->get($countKey);
