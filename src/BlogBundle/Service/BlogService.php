@@ -95,6 +95,7 @@ class BlogService
                 ->where('b.type = ?1 and b.trash= ?2')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
                 ->join('b.version', 'v', 'v.id = b.version')
+                ->orderBy('b.id', 'DESC')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit )
                 ->setParameter(1, $type)
@@ -109,6 +110,7 @@ class BlogService
                 ->join('b.version', 'v', 'v.id = b.version')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit )
+                ->orderBy('b.id', 'DESC')
                 ->setParameter(1, $trash);
         }
 
