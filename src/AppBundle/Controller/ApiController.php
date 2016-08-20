@@ -88,7 +88,6 @@ class ApiController extends Controller
         foreach ($blogs['blogs'] as $blog) {
             $tmp = [];
 
-            dump($blog);
             $tmp['id'] = $blog['id'];
             $tmp['title'] = $blog['title'];
             $tmp['content'] = $blog['content'];
