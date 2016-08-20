@@ -24,4 +24,22 @@ admin_test_page:
       path:     /preEdit/{id}
       defaults: { _controller: AdminBundle:Default:preEdit }
       requirements:
-        id: \d+
+          id: \d+
+
+admin_delete_blog:
+      path:     /delete/{blogId}
+      defaults: { _controller: AdminBundle:Default:deleteBlog }
+      methods: [GET]
+      requirements:
+          id: \d+
+
+admin_post_new_version:
+      path:     /version
+      defaults: { _controller: AdminBundle:Default:postNewVersion }
+      methods: [POST]
+
+
+admin_change_blog_version:
+      path:     /changeBlogVersion
+      defaults: { _controller: AdminBundle:Default:changeBlogVersion }
+      methods: [POST]

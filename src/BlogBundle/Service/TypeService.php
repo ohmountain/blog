@@ -28,7 +28,19 @@ class TypeService
      */
     public function getType($typeId)
     {
-        return $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
+        $cacheKey = "_type_{$typeId}";
+
+        $cache = $this->container->get('cache.manager')->get($cacheKey);
+
+        if ($cache) {
+            return \unserialize($cache);
+        }
+
+        $type = $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
+
+        $this->container->get('cache.manager')->set($cacheKey, serialize($type));
+
+        return $type;
     }
 
     /**
@@ -36,6 +48,14 @@ class TypeService
      */
     public function getTypes()
     {
+        $cacheKey = "_types_arr_";
+
+        $data = $this->container->get('cache.manager')->get($cacheKey);
+
+        if ($data) {
+            return $data;
+        }
+
         $qb = $this->container->get('doctrine')->getManager()->createQueryBuilder();
 
         $qb->add('select', 't')
@@ -57,6 +77,8 @@ class TypeService
         }
 
         $data['types'] = $typesArr;
+
+        $this->container->get('cache.manager')->set($cacheKey, $data);
 
         return $data;
     }

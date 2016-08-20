@@ -12,7 +12,9 @@
             <div class="form-group">
                 <label for="type">分类</label>
                 <select name="type" id="type" class="form-control">
-                    <option value="1">Rust</option>
+                    {% for type in types['types'] %}
+                        <option value="{{ type['id'] }}">{{ type['name'] }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
@@ -43,14 +45,34 @@
             var content = editor.value();
 
             if (title.trim().length === 0) {
-                titleDom.parent(".form-group").addClass("has-error");
+                return titleDom.parent(".form-group").addClass("has-error");
             } else {
                 titleDom.parent(".form-group").removeClass("has-error");
             }
 
             if (content.trim().length === 0) {
-                alert("内容不能为空")
+                return alert("内容不能为空")
             }
+
+            content = content.replace(/%/g, "%25");
+            content = content.replace(/\&/g, "%26");
+            content = content.replace(/\+/g, "%2B");
+
+            title = title.replace(/%/g, "%25");
+            title = title.replace(/\&/g, "%26");
+            title = title.replace(/\+/g, "%2B");
+
+            $.post("", {
+                type: type,
+                title: title,
+                content: content
+            }, function(data) {
+
+                titleDom.val("");
+                editor.value("");
+
+                alert("发布成功");
+            });
 
         })
 

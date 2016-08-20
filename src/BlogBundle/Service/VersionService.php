@@ -56,6 +56,10 @@ class VersionService
         return $version;
     }
 
+    /**
+     * @param Blog $blog
+     * @return Version
+     */
     public function getVersions(Blog $blog)
     {
         $rep = $this->container->get('doctrine')->getRepository("BlogBundle:Version");
@@ -65,5 +69,14 @@ class VersionService
         ]);
 
         return $versions;
+    }
+
+    /**
+     * @param $versionId
+     * @return Version
+     */
+    public function getVersion($versionId)
+    {
+        return $this->container->get('doctrine')->getRepository("BlogBundle:Version")->find($versionId);
     }
 }

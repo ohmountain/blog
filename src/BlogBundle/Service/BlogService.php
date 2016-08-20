@@ -33,18 +33,18 @@ class BlogService
      * @param int $limit
      * @return array
      */
-    public function page($typeId, $page=1, $limit=10)
+    public function page($typeId, $page=1, $limit=10, $trash=false)
     {
 
 
-        $typeCacheKey = 'type_' . $typeId;
+        $typeCacheKey = 'blog_of_type_' . $typeId;
 
         $cacheDriver = $this->container->get('cache.manager');
 
         $type = unserialize($cacheDriver->get($typeCacheKey));
 
         if (!$type) {
-            $type = $this->container->get('doctrine')->getRepository('BlogBundle:Type')->findOneBy(['id' => $typeId]);
+            $type = $this->container->get('type.manager')->getType($typeId);
         }
 
 
@@ -70,9 +70,9 @@ class BlogService
 
 
         if ($type instanceof Type) {
-            $cacheKey = 'blog_type_' . $type->getId() . '_page_' . $page . '_limit_' . $limit;
+            $cacheKey = 'blog_'+ $trash ? "trash" : '' + '_type_' . $type->getId() . '_page_' . $page . '_limit_' . $limit;
         } else {
-            $cacheKey = 'blog_type_all_page_' . $page . '_limit_' . $limit;
+            $cacheKey = 'blog_'+ $trash ? "trash" : '' + '_type_all_page_' . $page . '_limit_' . $limit;
         }
 
 
@@ -92,21 +92,24 @@ class BlogService
                 ->addSelect('t.id as type_id, t.name as type_name')
                 ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')
-                ->where('b.type = ?1')
+                ->where('b.type = ?1 and b.trash= ?2')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
                 ->join('b.version', 'v', 'v.id = b.version')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit )
-                ->setParameter(1, $type);
+                ->setParameter(1, $type)
+                ->setParameter(2, $trash);
         } else {
             $qb->select('b.id, b.title, b.createdAt')
                 ->addSelect('t.id as type_id, t.name as type_name')
                 ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')
+                ->where('b.trash= ?1')
                 ->join('b.type', 't', 'WITH', 't.id = b.type')
                 ->join('b.version', 'v', 'v.id = b.version')
                 ->setFirstResult( $offset )
-                ->setMaxResults( $limit );
+                ->setMaxResults( $limit )
+                ->setParameter(1, $trash);
         }
 
         $blogs = $qb->getQuery()->getArrayResult();
@@ -246,18 +249,89 @@ class BlogService
      * @param $id
      * @return Blog|bool
      */
-    public function getBlog($id)
+    public function getBlog($blogId)
     {
         /**
          * @var $blog Blog
          */
-        $blog = $this->container->get('doctrine')->getRepository('BlogBundle:Blog')->find($id);
+        $blog = $this->container->get('doctrine')->getRepository('BlogBundle:Blog')->find($blogId);
 
         if (!$blog) {
             return false;
         }
 
         return $blog;
+    }
+
+    /**
+     * @param $blogId
+     * @return bool
+     * 移入回收站
+     */
+    public function removeBlog($blogId)
+    {
+        /**
+         * @var $blog Blog
+         */
+        $blog = $this->getBlog($blogId);
+
+        if (!$blog) {
+            return false;
+        }
+
+        $blog->setTrash(true);
+
+        $em = $this->container->get('doctrine')->getManager();
+        $em->persist($blog);
+        $em->flush();
+
+        $this->container->get('cache.manager')->clearAll();
+
+        return true;
+    }
+
+    /**
+     * @param $blogId
+     * @return bool
+     * 从回收站恢复
+     */
+    public function restoreBlogAction($blogId)
+    {
+        /**
+         * @var $blog Blog
+         */
+        $blog = $this->getBlog($blogId);
+
+        if (!$blog) {
+            return false;
+        }
+
+        $blog->setTrash(false);
+
+        $em = $this->container->get('doctrine')->getManager();
+        $em->persist($blogId);
+        $em->flush();
+
+        $this->container->get('cache.manager')->clearAll();
+
+        return true;
+    }
+
+    /**
+     * @param $blogId
+     * @return \Doctrine\Common\Collections\Collection|null
+     * 获取所有版本
+     */
+    public function getVersions($blogId)
+    {
+        $blog = $this->getBlog($blogId);
+
+        if (!$blog) {
+            return null;
+        }
+
+        return $blog->getVersions();
+
     }
 
 }
