@@ -2,6 +2,10 @@ admin1_homepage:
     path:     /aabbcc
     defaults: { _controller: AdminBundle:Default:index }
 
+admin1_postpage:
+    path:     /post
+    defaults: { _controller: AdminBundle:Default:post }
+
 admin1_testpage:
     path:     /abc
     defaults: { _controller: AdminBundle:Default:getTypeNumber }

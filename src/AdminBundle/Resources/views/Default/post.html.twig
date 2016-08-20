@@ -1,0 +1,58 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" id="title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="type">分类</label>
+                <select name="type" id="type" class="form-control">
+                    <option value="1">Rust</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <textarea id="editor"></textarea>
+            <div class="text-center">
+                <button class="btn btn-success btn-lg" id="publish">发布</button>
+                <button class="btn btn-danger btn-lg" id="reset">重置</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <link rel="stylesheet" href="/public/css/simplemde.min.css">
+    <script src="/public/js/simplemde.min.js"></script>
+
+    <script>
+        var editor = new SimpleMDE({ element: document.getElementById("editor"),codeSyntaxHighlighting: true });
+
+        var titleDom = $("#title");
+        var typeDom = $("#type");
+
+
+        $("#publish").on('click', function(e) {
+            var title = titleDom.val();
+            var type = typeDom.val();
+            var content = editor.value();
+
+            if (title.trim().length === 0) {
+                titleDom.parent(".form-group").addClass("has-error");
+            } else {
+                titleDom.parent(".form-group").removeClass("has-error");
+            }
+
+            if (content.trim().length === 0) {
+                alert("内容不能为空")
+            }
+
+        })
+
+    </script>
+{% endblock %}

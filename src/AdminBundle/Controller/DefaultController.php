@@ -107,4 +107,9 @@ class DefaultController extends Controller
 
         return $this->response;
     }
+
+    public function postAction()
+    {
+        return $this->render('AdminBundle:Default:post.html.twig');
+    }
 }
