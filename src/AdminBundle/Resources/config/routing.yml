@@ -1,5 +1,5 @@
 admin1_homepage:
-    path:     /aabbcc
+    path:     /
     defaults: { _controller: AdminBundle:Default:index }
 
 admin1_postpage:

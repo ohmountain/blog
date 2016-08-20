@@ -88,7 +88,7 @@ class BlogService
 
 
         if($type instanceof Type) {
-            $qb->select('b.id, b.title, b.createdAt')
+            $qb->select('b.id, b.title, b.content, b.createdAt')
                 ->addSelect('t.id as type_id, t.name as type_name')
                 ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')
@@ -100,7 +100,7 @@ class BlogService
                 ->setParameter(1, $type)
                 ->setParameter(2, $trash);
         } else {
-            $qb->select('b.id, b.title, b.createdAt')
+            $qb->select('b.id, b.title, b.content, b.createdAt')
                 ->addSelect('t.id as type_id, t.name as type_name')
                 ->addSelect('v.id as version_id, v.version as version_number')
                 ->add('from', 'BlogBundle:Blog b')

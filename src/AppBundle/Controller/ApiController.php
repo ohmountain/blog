@@ -88,16 +88,17 @@ class ApiController extends Controller
         /**
          * @var $blog Blog
          */
-        foreach ($blogs as $blog) {
+        foreach ($blogs['blogs'] as $blog) {
             $tmp = [];
 
-            $tmp['id'] = $blog->getId();
-            $tmp['title'] = $blog->getTitle();
-            $tmp['content'] = $blog->getContent();
-            $tmp['time'] = $blog->getUpdatedAt()->format('Y年m月d日 H:i');
+            dump($blog);
+            $tmp['id'] = $blog['id'];
+            $tmp['title'] = $blog['title'];
+            $tmp['content'] = $blog['content'];
+            $tmp['time'] = $blog['createdAt']->format('Y年m月d日 H:i');
             $tmp['type'] = [
-                'id' => $blog->getType()->getId(),
-                'name' => $blog->getType()->getName()
+                'id' => $blog['type_id'],
+                'name' => $blog['type_name']
             ];
 
             $blogsArr[] = $tmp;

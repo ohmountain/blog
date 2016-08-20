@@ -266,6 +266,9 @@ class DefaultController extends Controller
         $success = $blogManager->switchVersion($blog, $version);
 
         if ($success) {
+
+            $this->get('cache.manager')->clearAll();
+
             return $this->response->setContent(json_encode([
                 'ok' => true,
                 'message' => 'Version has changed'
