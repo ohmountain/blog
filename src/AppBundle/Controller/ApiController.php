@@ -62,9 +62,6 @@ class ApiController extends Controller
         $limit = intval($request->get('limit'));
         $limit = $limit < 1 ? 10 : $limit;
 
-        $type = $this->getDoctrine()->getRepository('BlogBundle:Type')->findOneBy(['id' => $type]);
-
-
         /**
          * @var $blogManager BlogService
          */
