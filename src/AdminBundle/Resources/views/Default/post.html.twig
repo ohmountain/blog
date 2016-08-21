@@ -54,14 +54,6 @@
                 return alert("内容不能为空")
             }
 
-            content = content.replace(/%/g, "%25");
-            content = content.replace(/\&/g, "%26");
-            content = content.replace(/\+/g, "%2B");
-
-            title = title.replace(/%/g, "%25");
-            title = title.replace(/\&/g, "%26");
-            title = title.replace(/\+/g, "%2B");
-
             $.post("", {
                 type: type,
                 title: title,
