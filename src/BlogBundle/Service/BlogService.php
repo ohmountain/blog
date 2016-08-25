@@ -158,9 +158,15 @@ class BlogService
                     ->from('BlogBundle:Blog', 'b')
                     ->where('b.type = ?1')
                     ->setParameter(1, $type->getId());
-            } else {
+            } else if ($type === 0){
                 $qb->select('count(b.id)')
                     ->from('BlogBundle:Blog', 'b');
+            } else {
+                $type = $this->container->get('type.manager')->getType($type);
+                $qb->select('count(b.id)')
+                    ->from('BlogBundle:Blog', 'b')
+                    ->where('b.type = ?1')
+                    ->setParameter(1, $type->getId());
             }
 
 
