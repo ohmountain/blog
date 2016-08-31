@@ -21,6 +21,11 @@
             justify-content: center;
             align-items: center;
         }
+
+        #app {
+            opacity: 0;
+        }
+
         .m, .k, .d {
             display: inline-block;
             color: #FFF;
@@ -43,6 +48,14 @@
             animation-delay: 4s;
         }
 
+        .fadein {
+            animation: fade-in 1s;
+        }
+
+        .fadeout {
+            animation: fade-out 1s;
+        }
+
         @keyframes loading-animate {
             0% {
                 transform: rotate(0deg);
@@ -53,6 +66,24 @@
             }
 
         }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -62,7 +93,15 @@
     <div class="d">D</div>
 </div>
 <div id="app"></div>
-<script>window.onload = function () {document.getElementById("loading").remove();}</script>
+<script>
+    window.onload = function () {
+        document.getElementById('loading').classList.add('fadeout');
+        document.getElementById('app').classList.add('fadeint');
+        setTimeout(function() {
+            document.getElementById('loading').remove();
+        }, 1000);
+    }
+</script>
 <script type="text/javascript" src="/public/js/app.js"></script>
 </body>
 </html>
