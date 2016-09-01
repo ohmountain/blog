@@ -121,11 +121,11 @@
 <div id="app"></div>
 <script>
     window.onload = function () {
-        document.getElementById('loading').classList.add('fadeout');
+        document.getElementById('loading').className = "fadeout";
         setTimeout(function() {
-            document.getElementById('loading').remove();
+            document.body.removeChild(document.getElementById('loading'));
             document.getElementById('app').style.opacity = 1;
-            document.getElementById('app').classList.add('fadein');
+            document.getElementById('app').className = 'fadein';
         }, 1000);
     }
 </script>
