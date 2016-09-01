@@ -13,13 +13,24 @@
             margin: 0;
         }
         #loading {
-            height: 100vh;
+            height: 100%;
             width: 100%;
             background-color: #e3e3e3;
             text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: block;
+            position: fixed;
+        }
+        
+        #loading .inner {
+            position: absolute;
+            width: 240px;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            left: 50%;
+            top: 50%;
+            margin-left: -120px;
+            margin-top: -24px;
         }
 
         #app {
@@ -101,9 +112,11 @@
 </head>
 <body>
 <div id="loading">
-    <div class="m">M</div>
-    <div class="k">K</div>
-    <div class="d">D</div>
+    <div class="inner">
+        <div class="m">M</div>
+        <div class="k">K</div>
+        <div class="d">D</div>
+    </div>
 </div>
 <div id="app"></div>
 <script>
@@ -116,6 +129,6 @@
         }, 1000);
     }
 </script>
-<script type="text/javascript" src="https://renshan.info/app.js"></script>
+<!--<script type="text/javascript" src="https://renshan.info/app.js"></script>-->
 </body>
 </html>
