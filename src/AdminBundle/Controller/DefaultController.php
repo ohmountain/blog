@@ -156,6 +156,9 @@ class DefaultController extends Controller
             $datetime = new \DateTime();
             $datetime->setTimezone($timezone);
 
+
+            // TODO: 保证事务完整性
+
             $blog = new Blog();
             $blog->setContent($parsedContent);
             $blog->setCreatedAt($datetime);
@@ -182,6 +185,8 @@ class DefaultController extends Controller
             $blog->setVersion($version);
             $em->persist($blog);
             $em->flush();
+
+            // END TODO
 
             $allBlogCache = 'blog_of_type_0';
             $typeCache = 'blog_of_type_' . $typeId;
