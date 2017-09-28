@@ -16,3 +16,7 @@ services:
 
     cache.manager:
         class: BlogBundle\Service\CacheService
+
+    private.manager:
+        class: BlogBundle\Service\PrivateBlog
+        arguments: ["@service_container"]

@@ -12,3 +12,20 @@ app_api_blog:
     path:   /api/v1/blog
     defaults: { _controller: AppBundle:Api:blog }
     methods: [post,get]
+
+private_api_post:
+    path: /api/v2/post
+    defaults: { _controller: AppBundle:Private:post }
+    methods: [POST]
+
+private_api_get_by_title:
+    path: /api/v2/posts/{title}
+    defaults: { _controller: AppBundle:Private:getByTitle}
+    methods: [GET]
+
+private_api_get_by_id:
+    path: /api/v2/post/{id}
+    defaults: { _controller: AppBundle:Private:getById}
+    requirements:
+      id: \d+
+    methods: [GET]

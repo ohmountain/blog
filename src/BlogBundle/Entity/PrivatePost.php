@@ -36,13 +36,6 @@ class PrivatePost
     private $body;
 
     /**
-     * @var array
-     *
-     * @ORM\Column(name="tags", type="array", nullable="true")
-     */
-    private $tags;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -113,30 +106,6 @@ class PrivatePost
     public function getBody()
     {
         return $this->body;
-    }
-
-    /**
-     * Set tags
-     *
-     * @param array $tags
-     *
-     * @return PrivatePost
-     */
-    public function setTags($tags)
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * Get tags
-     *
-     * @return array
-     */
-    public function getTags()
-    {
-        return $this->tags;
     }
 
     /**
