@@ -39,6 +39,8 @@ class PrivateController extends Controller
             'posts' => []
         ];
 
+        $title = base64_decode($title);
+
         $posts = $this->get('private.manager')->getByTitle($title);
 
         foreach($posts as $post) {
